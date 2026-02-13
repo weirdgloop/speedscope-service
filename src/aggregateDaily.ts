@@ -24,11 +24,7 @@ if (!aggregatedProfiles || aggregatedProfiles.length === 0) {
   process.exit(0);
 }
 
-const aggregatedData = aggregateSpeedscopeData(
-    aggregatedProfiles.map((p) => {
-      return gunzipSync(p.speedscopeData).toString();
-    })
-);
+const aggregatedData = aggregateSpeedscopeData(aggregatedProfiles);
 await prisma.aggregatedProfile.create({
   data: {
     startTime: start,

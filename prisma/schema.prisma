@@ -35,12 +35,13 @@ enum AggregatedProfileType {
 }
 
 model AggregatedProfile {
-  id             Int      @id @default(autoincrement())
-  startTime      DateTime
-  endTime        DateTime
-  type           AggregatedProfileType
-  profileCount   Int
-  speedscopeData Bytes
+  id              Int                   @id @default(autoincrement())
+  startTime       DateTime
+  endTime         DateTime
+  type            AggregatedProfileType
+  profileCount    Int
+  speedscopeData  Bytes
+  frameTimingData Bytes
 
   @@index([type])
 }

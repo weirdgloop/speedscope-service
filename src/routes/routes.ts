@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import {
-  aggregate,
+  aggregate, getFrameTimingData,
   getProfile,
   logProfile,
 } from '../controllers/profileController.js';
@@ -44,6 +44,16 @@ router.get(
     ],
     handleValidationErrors,
     aggregate
+);
+
+// TODO rename / move
+router.get(
+    '/frame-timings',
+    [
+      query('type').exists().isIn([AggregatedProfileType.HOURLY, AggregatedProfileType.DAILY])
+    ],
+    handleValidationErrors,
+    getFrameTimingData
 );
 
 export default router;

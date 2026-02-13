@@ -1,6 +1,6 @@
 import {aggregateSpeedscopeData} from './repositories/profileRepository.js';
 import {prisma} from "./prisma.js";
-import {gunzipSync, gzipSync} from "node:zlib";
+import {gzipSync} from "node:zlib";
 import {AggregatedProfileType, Profile} from "../generated/prisma/client.js";
 
 const end = new Date();
@@ -22,19 +22,20 @@ if (profiles.length === 0) {
   console.log('No profiles found in the last hour.');
   process.exit(0);
 }
-
-const aggregatedData = aggregateSpeedscopeData(
-    profiles.map((p) => {
-      return gunzipSync(p.speedscopeData).toString();
-    })
-);
+const aggregatedData = aggregateSpeedscopeData(profiles);
 await prisma.aggregatedProfile.create({
   data: {
     startTime: start,
     endTime: end,
     type: AggregatedProfileType.HOURLY,
     profileCount: profiles.length,
-    speedscopeData: gzipSync(JSON.stringify(aggregatedData)),
+    speedscopeData: gzipSync(JSON.stringify(aggregatedData.file)),
+    frameTimingData: gzipSync(JSON.stringify(aggregatedData.frameTimings, (k, v) => {
+      if (v instanceof Map) {
+        return Array.from(v.entries());
+      }
+      return v;
+    })),
   }
 });
 
