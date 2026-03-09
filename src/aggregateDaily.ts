@@ -1,8 +1,9 @@
 import {aggregateSpeedscopeData} from "./repositories/profileRepository.js";
 import {AggregatedProfileType} from "../generated/prisma/enums.js";
-import {gunzipSync, gzipSync} from "node:zlib";
+import {gzipSync} from "node:zlib";
 import {prisma} from "./prisma.js";
 import {AggregatedProfile} from "../generated/prisma/client.js";
+import {getFrameTimingData} from "./controllers/profileController";
 
 const end = new Date();
 const start = new Date(end.getTime() - (24 * 60 * 60 * 1000)); // 1 day ago
@@ -33,7 +34,13 @@ await prisma.aggregatedProfile.create({
     profileCount: aggregatedProfiles
       .map((p) => p.profileCount)
       .reduce((a, b) => a + b, 0),
-    speedscopeData: gzipSync(JSON.stringify(aggregatedData)),
+    speedscopeData: gzipSync(JSON.stringify(aggregatedData.file)),
+    frameTimingData: gzipSync(JSON.stringify(aggregatedData.frameTimings, (k, v) => {
+      if (v instanceof Map) {
+        return Array.from(v.entries());
+      }
+      return v;
+    })),
   }
 });
 

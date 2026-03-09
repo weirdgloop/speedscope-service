@@ -1,7 +1,7 @@
 import type {
   SpeedscopeFile, SpeedscopeFrame,
 } from '../models/speedscope.js';
-import {Profile} from "../../generated/prisma/client";
+import {AggregatedProfile, Profile} from "../../generated/prisma/client";
 import {gunzipSync} from "node:zlib";
 
 export interface AggregationResult {
@@ -9,12 +9,10 @@ export interface AggregationResult {
   frameTimings: Map<string, Map<string, number>>;
 }
 
-// TODO Support [Profile|AggregatedProfile][]
-
 /**
- * @param data Array of speedscope data to aggregate. Must contain at least one entry.
+ * @param data Array of profiles to aggregate. Must contain at least one entry.
  */
-export function aggregateSpeedscopeData(data: Profile[]): AggregationResult {
+export function aggregateSpeedscopeData(data: (Profile|AggregatedProfile)[]): AggregationResult {
   if (data.length === 0) {
     throw new Error('No data to aggregate!');
   }
@@ -49,10 +47,11 @@ export function aggregateSpeedscopeData(data: Profile[]): AggregationResult {
           frameTimings.set(frameName, new Map<string, number>());
         }
         const map = frameTimings.get(frameName)!;
-        if (!map.has(profile.id)) {
-          map.set(profile.id, 0);
+        const id = profile.id.toString();
+        if (!map.has(id)) {
+          map.set(id, 0);
         }
-        map.set(profile.id, map.get(profile.id)! + weight);
+        map.set(id, map.get(id)! + weight);
       }
       const mappedSampleKey = mappedSample.join(',');
       globalSamples.set(
