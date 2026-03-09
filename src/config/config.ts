@@ -9,6 +9,8 @@ interface Config {
   requestSizeLimit: string;
   allowedOrigin: string;
   databaseUrl: string;
+  purgeProfiles: boolean;
+  purgeHourlyAggregations: boolean;
 }
 
 const logToken = process.env.LOG_TOKEN;
@@ -29,6 +31,8 @@ const config: Config = {
   requestSizeLimit: process.env.REQUEST_SIZE_LIMIT || '100mb',
   allowedOrigin: process.env.ALLOWED_ORIGIN || 'https://www.speedscope.app',
   databaseUrl: databaseUrl,
+  purgeProfiles: process.env.PURGE_PROFILES !== 'false',
+  purgeHourlyAggregations: process.env.PURGE_HOURLY_AGGREGATIONS !== 'false',
 };
 
 export default config;

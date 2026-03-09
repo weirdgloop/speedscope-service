@@ -3,6 +3,7 @@ import {AggregatedProfileType} from "../generated/prisma/enums.js";
 import {gzipSync} from "node:zlib";
 import {prisma} from "./prisma.js";
 import {AggregatedProfile} from "../generated/prisma/client.js";
+import config from "./config/config.js";
 
 const end = new Date();
 const start = new Date(end.getTime() - (24 * 60 * 60 * 1000)); // 1 day ago
@@ -43,11 +44,13 @@ await prisma.aggregatedProfile.create({
   }
 });
 
-await prisma.aggregatedProfile.deleteMany({
-  where: {
-    endTime: {
-      lte: end,
+if ( config.purgeHourlyAggregations ) {
+  await prisma.aggregatedProfile.deleteMany({
+    where: {
+      endTime: {
+        lte: end,
+      },
+      type: AggregatedProfileType.HOURLY,
     },
-    type: AggregatedProfileType.HOURLY,
-  },
-});
+  });
+}

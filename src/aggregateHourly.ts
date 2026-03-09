@@ -2,6 +2,7 @@ import {aggregateSpeedscopeData} from './repositories/profileRepository.js';
 import {prisma} from "./prisma.js";
 import {gzipSync} from "node:zlib";
 import {AggregatedProfileType, Profile} from "../generated/prisma/client.js";
+import config from "./config/config.js";
 
 const end = new Date();
 const start = new Date(end.getTime() - (60 * 60 * 1000)); // 1 hour ago
@@ -39,13 +40,15 @@ await prisma.aggregatedProfile.create({
   }
 });
 
-// Delete all profiles (except for forced ones) that were created before this script has started
-// running. This way we ensure there aren't any orphaned ones remaining in the DB
-await prisma.profile.deleteMany({
-  where: {
-    timestamp: {
-      lte: end,
+if ( config.purgeProfiles ) {
+  // Delete all profiles (except for forced ones) that were created before this script has started
+  // running. This way we ensure there aren't any orphaned ones remaining in the DB
+  await prisma.profile.deleteMany({
+    where: {
+      timestamp: {
+        lte: end,
+      },
+      forced: false,
     },
-    forced: false,
-  },
-});
+  });
+}
