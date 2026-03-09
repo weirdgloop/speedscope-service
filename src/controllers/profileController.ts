@@ -110,3 +110,27 @@ export const aggregate = async (
     next(error);
   }
 };
+
+// TODO rename/move/refactor
+export const getFrameTimingData = async (
+    req: Request,
+    res: Response,
+    next: NextFunction,
+) => {
+  try {
+    const { type } = req.query;
+
+    const aggregatedProfile = await prisma.aggregatedProfile.findFirst({
+      where: { type: type as AggregatedProfileType },
+      orderBy: { endTime: 'desc' },
+    });
+    if (!aggregatedProfile) {
+      return res.status(404).json({ error: 'No aggregated profiles found' });
+    }
+
+    const data = gunzipSync(aggregatedProfile.frameTimingData).toString();
+    res.status(200).json(JSON.parse(data));
+  } catch (error) {
+    next(error);
+  }
+};
