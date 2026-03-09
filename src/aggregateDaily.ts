@@ -3,7 +3,6 @@ import {AggregatedProfileType} from "../generated/prisma/enums.js";
 import {gzipSync} from "node:zlib";
 import {prisma} from "./prisma.js";
 import {AggregatedProfile} from "../generated/prisma/client.js";
-import {getFrameTimingData} from "./controllers/profileController";
 
 const end = new Date();
 const start = new Date(end.getTime() - (24 * 60 * 60 * 1000)); // 1 day ago
