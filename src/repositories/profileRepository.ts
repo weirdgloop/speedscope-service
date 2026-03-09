@@ -3,6 +3,7 @@ import type {
 } from '../models/speedscope.js';
 import {AggregatedProfile, Profile} from "../../generated/prisma/client";
 import {gunzipSync} from "node:zlib";
+import config from "../config/config.js";
 
 export interface AggregationResult {
   file: SpeedscopeFile;
@@ -15,6 +16,16 @@ export interface AggregationResult {
 export function aggregateSpeedscopeData(data: (Profile|AggregatedProfile)[]): AggregationResult {
   if (data.length === 0) {
     throw new Error('No data to aggregate!');
+  }
+
+  const peakMemoryUsages = new Map<string, number>();
+
+  function trackMemory(label: string) {
+    if ( !config.trackAggregationMemory ) {
+      return;
+    }
+    const rss = process.memoryUsage().rss;
+    peakMemoryUsages.set(label, Math.max(peakMemoryUsages.get(label) ?? 0, rss));
   }
 
   const globalFrames = new Map<string, number>();
@@ -59,6 +70,7 @@ export function aggregateSpeedscopeData(data: (Profile|AggregatedProfile)[]): Ag
         (globalSamples.get(mappedSampleKey) ?? 0) + weight,
       );
     }
+    trackMemory('profile-loading');
   });
 
   console.log(`Aggregated to ${globalSamples.size} unique samples and ${globalFrames.size} unique frames.`);
@@ -70,6 +82,7 @@ export function aggregateSpeedscopeData(data: (Profile|AggregatedProfile)[]): Ag
       const key = arr.slice(0, i).join(',');
       globalSort.set(key, (globalSort.get(key) ?? 0) + weight);
     }
+    trackMemory('sample-sorting');
   });
 
   const globalSortTuples = new Map<string, number[]>();
@@ -84,6 +97,7 @@ export function aggregateSpeedscopeData(data: (Profile|AggregatedProfile)[]): Ag
     }
 
     globalSortTuples.set(sample, values);
+    trackMemory('tuple-creation');
   }
 
   console.log('Sorting tuples...');
@@ -94,6 +108,7 @@ export function aggregateSpeedscopeData(data: (Profile|AggregatedProfile)[]): Ag
     for (let i = 0; i < Math.min(ta.length, tb.length); i++) {
       if (ta[i] !== tb[i]) return ta[i]! - tb[i]!;
     }
+    trackMemory('tuple-sorting');
     return ta.length - tb.length;
   });
 
@@ -101,8 +116,14 @@ export function aggregateSpeedscopeData(data: (Profile|AggregatedProfile)[]): Ag
   json!.profiles[0]!.samples = tuples.map(([key]) => key.split(',').map(Number));
   json!.profiles[0]!.weights = tuples.map(([, weight]) => weight);
   json!.shared.frames = globalFramesRev;
+  trackMemory('profile-rebuilding');
 
   console.log('Aggregation complete.');
+  if (config.trackAggregationMemory) {
+    for (const [label, memory] of peakMemoryUsages.entries()) {
+      console.log(`Peak memory usage during ${label}: ${(memory / (1024 * 1024)).toFixed(2)} MB`);
+    }
+  }
   return {
     file: json!,
     frameTimings: frameTimings,

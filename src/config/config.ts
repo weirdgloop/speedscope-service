@@ -11,6 +11,7 @@ interface Config {
   databaseUrl: string;
   purgeProfiles: boolean;
   purgeHourlyAggregations: boolean;
+  trackAggregationMemory: boolean;
 }
 
 const logToken = process.env.LOG_TOKEN;
@@ -33,6 +34,7 @@ const config: Config = {
   databaseUrl: databaseUrl,
   purgeProfiles: process.env.PURGE_PROFILES !== 'false',
   purgeHourlyAggregations: process.env.PURGE_HOURLY_AGGREGATIONS !== 'false',
+  trackAggregationMemory: process.env.TRACK_AGGREGATION_MEMORY !== 'false',
 };
 
 export default config;
