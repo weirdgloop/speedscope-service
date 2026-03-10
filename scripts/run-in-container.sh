@@ -6,7 +6,7 @@ IMAGE="ghcr.io/somemwdev/speedscope-service:main"
 
 docker run --rm \
   --env-file "$SCRIPT_DIR/../.env" \
-  -v "$(pwd)/db:/db:rw" \
+  -v "$SCRIPT_DIR/../db:/db:rw" \
   -p 3001:3000 \
   "$IMAGE" \
   "$@"
