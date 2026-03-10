@@ -18,7 +18,8 @@ CREATE TABLE "AggregatedProfile" (
     "endTime" DATETIME NOT NULL,
     "type" TEXT NOT NULL,
     "profileCount" INTEGER NOT NULL,
-    "speedscopeData" BLOB NOT NULL
+    "speedscopeData" BLOB NOT NULL,
+    "frameTimingData" BLOB NOT NULL
 );
 
 -- CreateIndex
@@ -41,3 +42,4 @@ CREATE INDEX "Profile_environment_idx" ON "Profile"("environment");
 
 -- CreateIndex
 CREATE INDEX "AggregatedProfile_type_idx" ON "AggregatedProfile"("type");
+
