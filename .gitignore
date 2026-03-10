@@ -146,6 +146,3 @@ vite.config.ts.timestamp-*
 .idea/
 
 /generated/prisma
-
-
-*.db
