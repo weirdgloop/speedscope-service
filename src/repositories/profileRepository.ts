@@ -115,6 +115,7 @@ export function aggregateSpeedscopeData(data: (Profile|AggregatedProfile)[]): Ag
   console.log('Rebuilding aggregated profile...');
   json!.profiles[0]!.samples = tuples.map(([key]) => key.split(',').map(Number));
   json!.profiles[0]!.weights = tuples.map(([, weight]) => weight);
+  json!.profiles[0]!.name = 'Aggregated Profile';
   json!.shared.frames = globalFramesRev;
   trackMemory('profile-rebuilding');
 

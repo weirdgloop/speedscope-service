@@ -11,6 +11,7 @@ export interface SpeedscopeFrame {
 export interface SpeedscopeProfile {
   samples: number[][];
   weights: number[];
+  name: string;
 }
 
 export interface SpeedscopeFile {
