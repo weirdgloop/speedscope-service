@@ -1,9 +1,27 @@
-FROM node:slim
+FROM node:20-slim AS builder
 
 WORKDIR /app
+
+COPY package*.json ./
+RUN npm ci
+
 COPY . .
-RUN npm install
+
 RUN npx prisma generate
 RUN npm run build
+
+RUN npm prune --omit=dev
+
+
+FROM node:20-slim
+
+WORKDIR /app
+
+COPY --from=builder /app/node_modules ./node_modules
+COPY --from=builder /app/dist ./dist
+COPY --from=builder /app/package*.json ./
+COPY --from=builder /app/prisma ./prisma
+
 EXPOSE 3000
+
 CMD sh -c "npx prisma migrate deploy && node dist/src/server.js"
