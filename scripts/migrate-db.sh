@@ -1,6 +1,5 @@
-docker run --rm \
-  --env-file .env \
-  -v "$(pwd)/db:/db:rw" \
-  -p 3001:3000 \
-  ghcr.io/somemwdev/speedscope-service:main \
-  npx prisma migrate deploy
+#!/usr/bin/env bash
+set -euo pipefail
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
+"$SCRIPT_DIR/run-in-container.sh" npx prisma migrate deploy
