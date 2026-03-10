@@ -72,7 +72,7 @@ export const getProfile = async (
   next: NextFunction,
 ) => {
   try {
-    const { id } = req.query;
+    const { id } = req.params;
 
     const profile = await prisma.profile.findUnique({
       where: { id: id as string }
@@ -88,13 +88,13 @@ export const getProfile = async (
   }
 };
 
-export const aggregate = async (
+export const getLatestAggregation = async (
   req: Request,
   res: Response,
   next: NextFunction,
 ) => {
   try {
-    const { type } = req.query;
+    const { type } = req.params;
 
     const aggregatedProfile = await prisma.aggregatedProfile.findFirst({
       where: { type: type as AggregatedProfileType },
@@ -117,7 +117,7 @@ export const getFrameTimingData = async (
     next: NextFunction,
 ) => {
   try {
-    const { type } = req.query;
+    const { type } = req.params;
 
     const aggregatedProfile = await prisma.aggregatedProfile.findFirst({
       where: { type: type as AggregatedProfileType },

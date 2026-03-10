@@ -1,10 +1,11 @@
 import { Router } from 'express';
 import {
-  aggregate, getFrameTimingData,
+  getFrameTimingData,
+  getLatestAggregation,
   getProfile,
   logProfile,
 } from '../controllers/profileController.js';
-import {body, query} from 'express-validator';
+import {body, param} from 'express-validator';
 import { handleValidationErrors } from '../middlewares/errorHandler.js';
 import cors from 'cors';
 import config from "../config/config.js";
@@ -13,8 +14,8 @@ import {AggregatedProfileType} from "../../generated/prisma/enums.js";
 const router = Router();
 
 router.get(
-  '/get', [
-    query('id').isString().notEmpty(),
+  '/profile/:id', [
+    param('id').isString().notEmpty(),
   ],
   cors({
     origin: config.allowedOrigin,
@@ -35,22 +36,21 @@ router.post('/log', [
 ], handleValidationErrors, logProfile);
 
 router.get(
-    '/aggregate',
+    '/latest/aggregation/:type',
     cors({
       origin: config.allowedOrigin,
     }),
     [
-      query('type').exists().isIn([AggregatedProfileType.HOURLY, AggregatedProfileType.DAILY])
+      param('type').exists().isIn([AggregatedProfileType.HOURLY, AggregatedProfileType.DAILY])
     ],
     handleValidationErrors,
-    aggregate
+    getLatestAggregation
 );
 
-// TODO rename / move
 router.get(
-    '/frame-timings',
+    '/latest/frame-timings/:type',
     [
-      query('type').exists().isIn([AggregatedProfileType.HOURLY, AggregatedProfileType.DAILY])
+      param('type').exists().isIn([AggregatedProfileType.HOURLY, AggregatedProfileType.DAILY])
     ],
     handleValidationErrors,
     getFrameTimingData
