@@ -1,12 +1,8 @@
 services:
   speedscope-service:
-    build:
-      dockerfile: Dockerfile
-      context: .
+    image: ghcr.io/somemwdev/speedscope-service:main
     ports:
       - "3000:3000"
     env_file: .env
     volumes:
       - "./db:/db:rw"
-    environment:
-      DATABASE_URL: "file:/db/database.db"

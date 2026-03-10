@@ -111,7 +111,6 @@ export const aggregate = async (
   }
 };
 
-// TODO rename/move/refactor
 export const getFrameTimingData = async (
     req: Request,
     res: Response,
