@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import {
   getFrameTimingData,
-  getLatestAggregation,
+  getLatestAggregation, getLatestAggregationMetadata,
   getProfile,
   getProfileMetadata,
   logProfile,
@@ -55,6 +55,18 @@ router.get(
     ],
     handleValidationErrors,
     getLatestAggregation
+);
+
+router.get(
+    '/latest/aggregation/:type/metadata',
+    cors({
+      origin: config.allowedOrigin,
+    }),
+    [
+      param('type').exists().isIn([AggregatedProfileType.HOURLY, AggregatedProfileType.DAILY])
+    ],
+    handleValidationErrors,
+    getLatestAggregationMetadata
 );
 
 router.get(
