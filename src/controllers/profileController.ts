@@ -88,6 +88,36 @@ export const getProfile = async (
   }
 };
 
+export const getProfileMetadata = async (
+    req: Request,
+    res: Response,
+    next: NextFunction,
+) => {
+  try {
+    const { id } = req.params;
+
+    const profile = await prisma.profile.findUnique({
+      where: { id: id as string },
+      select: {
+        id: true,
+        wiki: true,
+        url: true,
+        cfRay: true,
+        forced: true,
+        timestamp: true,
+        environment: true,
+      }
+    }) as Profile | null;
+    if (!profile) {
+      return res.status(404).json({ error: 'Profile not found' });
+    }
+
+    res.status(200).json(profile);
+  } catch (error) {
+    next(error);
+  }
+}
+
 export const getLatestAggregation = async (
   req: Request,
   res: Response,

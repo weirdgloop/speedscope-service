@@ -3,6 +3,7 @@ import {
   getFrameTimingData,
   getLatestAggregation,
   getProfile,
+  getProfileMetadata,
   logProfile,
 } from '../controllers/profileController.js';
 import {body, param} from 'express-validator';
@@ -23,6 +24,15 @@ router.get(
   handleValidationErrors,
   getProfile
 );
+
+router.get(
+    '/metadata/:id',
+    [
+      param('id').isString().notEmpty(),
+    ],
+    handleValidationErrors,
+    getProfileMetadata
+)
 
 router.post('/log', [
   body('id').isString().notEmpty(),
