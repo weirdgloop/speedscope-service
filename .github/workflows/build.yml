@@ -1,4 +1,4 @@
-name: build.yml
+name: Build image
 on:
   workflow_dispatch:
 
