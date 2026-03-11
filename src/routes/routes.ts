@@ -59,9 +59,6 @@ router.get(
 
 router.get(
     '/aggregation/latest/:type/metadata',
-    cors({
-      origin: config.allowedOrigin,
-    }),
     [
       param('type').exists().isIn([AggregatedProfileType.HOURLY, AggregatedProfileType.DAILY])
     ],
