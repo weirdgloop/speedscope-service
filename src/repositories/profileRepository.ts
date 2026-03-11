@@ -12,8 +12,9 @@ export interface AggregationResult {
 
 /**
  * @param data Array of profiles to aggregate. Must contain at least one entry.
+ * @param name The name to assign to the aggregated profile.
  */
-export function aggregateSpeedscopeData(data: (Profile|AggregatedProfile)[]): AggregationResult {
+export function aggregateSpeedscopeData(data: (Profile|AggregatedProfile)[], name: string): AggregationResult {
   if (data.length === 0) {
     throw new Error('No data to aggregate!');
   }
@@ -115,7 +116,7 @@ export function aggregateSpeedscopeData(data: (Profile|AggregatedProfile)[]): Ag
   console.log('Rebuilding aggregated profile...');
   json!.profiles[0]!.samples = tuples.map(([key]) => key.split(',').map(Number));
   json!.profiles[0]!.weights = tuples.map(([, weight]) => weight);
-  json!.profiles[0]!.name = 'Aggregated Profile';
+  json!.profiles[0]!.name = name;
   json!.shared.frames = globalFramesRev;
   trackMemory('profile-rebuilding');
 

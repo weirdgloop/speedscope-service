@@ -23,7 +23,10 @@ if (profiles.length === 0) {
   console.log('No profiles found in the last hour.');
   process.exit(0);
 }
-const aggregatedData = aggregateSpeedscopeData(profiles);
+const aggregatedData = aggregateSpeedscopeData(
+    profiles,
+    `Hourly aggregation (${start.toISOString()} to ${end.toISOString()})`
+);
 await prisma.aggregatedProfile.create({
   data: {
     startTime: start,

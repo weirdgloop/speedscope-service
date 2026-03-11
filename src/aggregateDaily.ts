@@ -25,7 +25,10 @@ if (!aggregatedProfiles || aggregatedProfiles.length === 0) {
   process.exit(0);
 }
 
-const aggregatedData = aggregateSpeedscopeData(aggregatedProfiles);
+const aggregatedData = aggregateSpeedscopeData(
+    aggregatedProfiles,
+    `Daily aggregation (${start.toISOString()} to ${end.toISOString()})`
+);
 await prisma.aggregatedProfile.create({
   data: {
     startTime: start,
