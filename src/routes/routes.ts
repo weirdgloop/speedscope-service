@@ -46,7 +46,7 @@ router.post('/log', [
 ], handleValidationErrors, logProfile);
 
 router.get(
-    '/latest/aggregation/:type',
+    '/aggregation/latest/:type',
     cors({
       origin: config.allowedOrigin,
     }),
@@ -58,7 +58,7 @@ router.get(
 );
 
 router.get(
-    '/latest/aggregation/:type/metadata',
+    '/aggregation/latest/:type/metadata',
     cors({
       origin: config.allowedOrigin,
     }),
@@ -70,7 +70,7 @@ router.get(
 );
 
 router.get(
-    '/latest/frame-timings/:type',
+    '/aggregation/latest/:type/frame-timings',
     [
       param('type').exists().isIn([AggregatedProfileType.HOURLY, AggregatedProfileType.DAILY])
     ],
