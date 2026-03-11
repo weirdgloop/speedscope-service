@@ -118,6 +118,32 @@ export const getProfileMetadata = async (
   }
 }
 
+export const getAggregations = async (
+    req: Request,
+    res: Response,
+    next: NextFunction,
+) => {
+  try {
+    const {type} = req.params;
+
+    const where = type ? {type: type as AggregatedProfileType} : {};
+    const aggregatedProfiles = await prisma.aggregatedProfile.findMany({
+      where,
+      orderBy: {endTime: 'desc'},
+      select: {
+        id: true,
+        startTime: true,
+        endTime: true,
+        type: true,
+        profileCount: true,
+      }
+    });
+    res.status(200).json(aggregatedProfiles);
+  } catch (error) {
+    next(error);
+  }
+}
+
 export const getLatestAggregation = async (
   req: Request,
   res: Response,

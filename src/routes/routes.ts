@@ -3,6 +3,7 @@ import {
   getAggregationById,
   getAggregationFrameTimingDataById,
   getAggregationMetadataById,
+  getAggregations,
   getLatestAggregation,
   getLatestAggregationMetadata,
   getLatestFrameTimingData,
@@ -48,6 +49,20 @@ router.post('/log', [
   body('parserReport').optional(),
   body('environment').isString().notEmpty(),
 ], handleValidationErrors, logProfile);
+
+router.get(
+    '/aggregations',
+    getAggregations
+)
+
+router.get(
+    '/aggregations/:type',
+    [
+      param('type').notEmpty().isIn([AggregatedProfileType.HOURLY, AggregatedProfileType.DAILY])
+    ],
+    handleValidationErrors,
+    getAggregations
+)
 
 router.get(
     '/aggregation/latest/:type',
