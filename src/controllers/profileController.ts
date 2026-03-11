@@ -170,7 +170,7 @@ export const getLatestAggregationMetadata = async (
   }
 }
 
-export const getFrameTimingData = async (
+export const getLatestFrameTimingData = async (
     req: Request,
     res: Response,
     next: NextFunction,
@@ -192,3 +192,75 @@ export const getFrameTimingData = async (
     next(error);
   }
 };
+
+export const getAggregationById = async (
+    req: Request,
+    res: Response,
+    next: NextFunction,
+) => {
+  try {
+    const { id } = req.params;
+
+    const aggregatedProfile = await prisma.aggregatedProfile.findUnique({
+      where: { id: Number(id) },
+    });
+    if (!aggregatedProfile) {
+      return res.status(404).json({ error: 'Aggregated profile not found' });
+    }
+
+    const data = gunzipSync(aggregatedProfile.speedscopeData).toString();
+    res.status(200).json(JSON.parse(data));
+  } catch (error) {
+    next(error);
+  }
+}
+
+export const getAggregationMetadataById = async (
+    req: Request,
+    res: Response,
+    next: NextFunction,
+) => {
+  try {
+    const { id } = req.params;
+
+    const aggregatedProfile = await prisma.aggregatedProfile.findUnique({
+      where: { id: Number(id) },
+      select: {
+        id: true,
+        startTime: true,
+        endTime: true,
+        type: true,
+        profileCount: true,
+      }
+    });
+    if (!aggregatedProfile) {
+      return res.status(404).json({ error: 'Aggregated profile not found' });
+    }
+
+    res.status(200).json(aggregatedProfile);
+  } catch (error) {
+    next(error);
+  }
+}
+
+export const getAggregationFrameTimingDataById = async (
+    req: Request,
+    res: Response,
+    next: NextFunction,
+) => {
+  try {
+    const { id } = req.params;
+
+    const aggregatedProfile = await prisma.aggregatedProfile.findUnique({
+      where: { id: Number(id) },
+    });
+    if (!aggregatedProfile) {
+      return res.status(404).json({ error: 'Aggregated profile not found' });
+    }
+
+    const data = gunzipSync(aggregatedProfile.frameTimingData).toString();
+    res.status(200).json(JSON.parse(data));
+  } catch (error) {
+    next(error);
+  }
+}

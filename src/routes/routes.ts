@@ -1,7 +1,11 @@
 import { Router } from 'express';
 import {
-  getFrameTimingData,
-  getLatestAggregation, getLatestAggregationMetadata,
+  getAggregationById,
+  getAggregationFrameTimingDataById,
+  getAggregationMetadataById,
+  getLatestAggregation,
+  getLatestAggregationMetadata,
+  getLatestFrameTimingData,
   getProfile,
   getProfileMetadata,
   logProfile,
@@ -72,7 +76,40 @@ router.get(
       param('type').exists().isIn([AggregatedProfileType.HOURLY, AggregatedProfileType.DAILY])
     ],
     handleValidationErrors,
-    getFrameTimingData
+    getLatestFrameTimingData
+);
+
+router.get(
+    '/aggregation/:id',
+    cors({
+      origin: config.allowedOrigin,
+    }),
+    [
+      param('id').isInt(),
+    ],
+    handleValidationErrors,
+    getAggregationById
+);
+
+router.get(
+    '/aggregation/:id/metadata',
+    cors({
+      origin: config.allowedOrigin,
+    }),
+    [
+      param('id').isInt(),
+    ],
+    handleValidationErrors,
+    getAggregationMetadataById
+);
+
+router.get(
+    '/aggregation/:id/frame-timings',
+    [
+      param('id').isInt(),
+    ],
+    handleValidationErrors,
+    getAggregationFrameTimingDataById
 );
 
 export default router;
