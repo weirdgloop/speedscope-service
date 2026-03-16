@@ -1,6 +1,6 @@
 services:
   speedscope-service:
-    image: ghcr.io/somemwdev/speedscope-service:main
+    image: ghcr.io/weirdgloop/speedscope-service:main
     ports:
       - "3000:3000"
     env_file: .env
