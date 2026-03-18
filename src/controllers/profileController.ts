@@ -106,13 +106,17 @@ export const getProfileMetadata = async (
         forced: true,
         timestamp: true,
         environment: true,
+        parserReport: true,
       }
     }) as Profile | null;
     if (!profile) {
       return res.status(404).json({ error: 'Profile not found' });
     }
 
-    res.status(200).json(profile);
+    res.status(200).json({
+      ...profile,
+      parserReport: profile.parserReport ? JSON.parse( profile.parserReport ) : null,
+    });
   } catch (error) {
     next(error);
   }
