@@ -6,3 +6,7 @@ services:
     env_file: .env
     volumes:
       - "./db:/db:rw"
+    logging:
+      driver: journald
+      options:
+        tag: "{{.Name}}/{{.ID}}"
