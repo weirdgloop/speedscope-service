@@ -1,4 +1,4 @@
-import { Router } from 'express';
+import express, { Router } from 'express';
 import {
   getAggregationById,
   getAggregationFrameTimingDataById,
@@ -16,6 +16,7 @@ import { handleValidationErrors } from '../middlewares/errorHandler.js';
 import cors from 'cors';
 import config from "../config/config.js";
 import {AggregatedProfileType} from "../../generated/prisma/enums.js";
+import requireAuth from "../middlewares/authentication.js";
 
 const router = Router();
 
@@ -39,7 +40,7 @@ router.get(
     getProfileMetadata
 )
 
-router.post('/log', [
+router.post('/log', requireAuth, express.json({ limit: config.requestSizeLimit }), [
   body('id').isString().notEmpty(),
   body('wiki').isString().notEmpty(),
   body('url').isString().notEmpty(),

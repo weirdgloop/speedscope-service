@@ -1,19 +1,7 @@
 import type { NextFunction, Request, Response } from 'express';
-import config from '../config/config.js';
-import { timingSafeEqual } from 'node:crypto';
 import type {AggregatedProfileType, Profile} from "../../generated/prisma/client.js";
 import {prisma} from "../prisma.js";
 import {gunzipSync, gzipSync} from "node:zlib";
-
-function isAuthenticated(req: Request): boolean {
-  const auth = req.headers.authorization;
-  const expected = `Bearer ${config.logToken}`;
-  if (!auth) return false;
-  const authBuffer = Buffer.from(auth);
-  const expectedBuffer = Buffer.from(expected);
-  if (authBuffer.length !== expectedBuffer.length) return false;
-  return timingSafeEqual(authBuffer, expectedBuffer);
-}
 
 export const logProfile = async (
   req: Request,
@@ -21,10 +9,6 @@ export const logProfile = async (
   next: NextFunction,
 ) => {
   try {
-    if (!isAuthenticated(req)) {
-      return res.status(403).json({ error: 'Forbidden' });
-    }
-
     const {
       id,
       wiki,
