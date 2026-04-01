@@ -12,6 +12,15 @@ RUN npm run build
 
 RUN npm prune --omit=dev
 
+RUN apt-get update -y \
+    && apt-get install -y git \
+    && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /speedscope
+RUN git clone https://github.com/jlfwong/speedscope.git --depth 1
+WORKDIR /speedscope/speedscope
+RUN npm ci
+RUN node_modules/.bin/tsx scripts/build-release.ts --outdir dist --protocol http
 
 FROM node:22-slim
 
@@ -26,6 +35,7 @@ COPY --from=builder /app/dist ./dist
 COPY --from=builder /app/package*.json ./
 COPY --from=builder /app/prisma ./prisma
 COPY --from=builder /app/prisma.config.ts ./prisma.config.ts
+COPY --from=builder /speedscope/speedscope/dist ./ui
 
 EXPOSE 3000
 
