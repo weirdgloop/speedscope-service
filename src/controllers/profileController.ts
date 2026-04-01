@@ -2,6 +2,7 @@ import type { NextFunction, Request, Response } from 'express';
 import type {AggregatedProfileType, Profile} from "../../generated/prisma/client.js";
 import {prisma} from "../prisma.js";
 import {gunzipSync, gzipSync} from "node:zlib";
+import escapeHTML from "escape-html";
 
 export const logProfile = async (
   req: Request,
@@ -70,6 +71,25 @@ export const getProfile = async (
   } catch (error) {
     next(error);
   }
+};
+
+export const viewProfile = async (
+    req: Request,
+    res: Response,
+) => {
+  const { id } = req.params;
+  const urlHtml = escapeHTML( `/#profileURL=/profile/${id}` );
+  const html = `<!DOCTYPE html>
+<html lang="en">
+  <head>
+      <title>Speedscope Profile</title>
+  </head>
+  <body style="margin: 0; padding: 0; overflow: hidden;">
+      <iframe id="speedscopeFrame" style="width: 100%; height: 100vh; border: none;" src="${urlHtml}"></iframe>
+  </body>
+</html>
+`;
+  res.status(200).send(html);
 };
 
 export const getProfileMetadata = async (
