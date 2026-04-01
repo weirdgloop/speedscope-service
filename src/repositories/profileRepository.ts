@@ -22,7 +22,7 @@ export function aggregateSpeedscopeData(data: (Profile|AggregatedProfile)[], nam
   const peakMemoryUsages = new Map<string, number>();
 
   function trackMemory(label: string) {
-    if ( !config.trackAggregationMemory ) {
+    if (!config.trackAggregationMemory) {
       return;
     }
     const rss = process.memoryUsage().rss;

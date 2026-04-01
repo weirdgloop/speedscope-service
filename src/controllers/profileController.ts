@@ -78,7 +78,7 @@ export const viewProfile = async (
     res: Response,
 ) => {
   const { id } = req.params;
-  const urlHtml = escapeHTML( `/#profileURL=/profile/${id}` );
+  const urlHtml = escapeHTML(`/#profileURL=/profile/${id}`);
   const html = `<!DOCTYPE html>
 <html lang="en">
   <head>
@@ -119,7 +119,7 @@ export const getProfileMetadata = async (
 
     res.status(200).json({
       ...profile,
-      parserReport: profile.parserReport ? JSON.parse( profile.parserReport ) : null,
+      parserReport: profile.parserReport ? JSON.parse(profile.parserReport) : null,
     });
   } catch (error) {
     next(error);
