@@ -10,6 +10,8 @@ import {
   getProfile,
   getProfileMetadata,
   logProfile,
+  viewAggregation,
+  viewLatestAggregation,
   viewProfile,
 } from '../controllers/profileController.js';
 import {body, param} from 'express-validator';
@@ -30,6 +32,22 @@ router.get(
   }),
   handleValidationErrors,
   getProfile
+);
+
+router.get(
+    '/view/aggregation/latest/:type', [
+      param('type').isString().notEmpty().isIn([AggregatedProfileType.HOURLY, AggregatedProfileType.DAILY]),
+    ],
+    handleValidationErrors,
+    viewLatestAggregation
+);
+
+router.get(
+    '/view/aggregation/:id', [
+      param('id').isInt(),
+    ],
+    handleValidationErrors,
+    viewAggregation
 );
 
 router.get(

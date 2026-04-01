@@ -73,13 +73,9 @@ export const getProfile = async (
   }
 };
 
-export const viewProfile = async (
-    req: Request,
-    res: Response,
-) => {
-  const { id } = req.params;
-  const urlHtml = escapeHTML(`/#profileURL=/profile/${id}`);
-  const html = `<!DOCTYPE html>
+const createViewHtml = (profileUrl: string) => {
+  const urlHtml = escapeHTML(profileUrl);
+  return `<!DOCTYPE html>
 <html lang="en">
   <head>
       <title>Speedscope Profile</title>
@@ -89,7 +85,30 @@ export const viewProfile = async (
   </body>
 </html>
 `;
-  res.status(200).send(html);
+};
+
+export const viewLatestAggregation = async (
+    req: Request,
+    res: Response,
+) => {
+  const { type } = req.params;
+  res.status(200).send(createViewHtml(`/#profileURL=/aggregation/latest/${type}`));
+};
+
+export const viewAggregation = async (
+    req: Request,
+    res: Response,
+) => {
+  const { id } = req.params;
+  res.status(200).send(createViewHtml(`/#profileURL=/aggregation/${id}`));
+};
+
+export const viewProfile = async (
+    req: Request,
+    res: Response,
+) => {
+  const { id } = req.params;
+  res.status(200).send(createViewHtml(`/#profileURL=/profile/${id}`));
 };
 
 export const getProfileMetadata = async (
