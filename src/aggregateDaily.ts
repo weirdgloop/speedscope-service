@@ -47,7 +47,7 @@ await prisma.aggregatedProfile.create({
   }
 });
 
-if ( config.purgeHourlyAggregations ) {
+if (config.purgeHourlyAggregations) {
   await prisma.aggregatedProfile.deleteMany({
     where: {
       endTime: {

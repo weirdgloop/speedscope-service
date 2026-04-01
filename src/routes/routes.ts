@@ -10,6 +10,7 @@ import {
   getProfile,
   getProfileMetadata,
   logProfile,
+  viewProfile,
 } from '../controllers/profileController.js';
 import {body, param} from 'express-validator';
 import { handleValidationErrors } from '../middlewares/errorHandler.js';
@@ -30,6 +31,14 @@ router.get(
   handleValidationErrors,
   getProfile
 );
+
+router.get(
+    '/view/:id', [
+      param('id').isString().notEmpty(),
+    ],
+    handleValidationErrors,
+    viewProfile
+)
 
 router.get(
     '/metadata/:id',

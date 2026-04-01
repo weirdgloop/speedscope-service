@@ -43,7 +43,7 @@ await prisma.aggregatedProfile.create({
   }
 });
 
-if ( config.purgeProfiles ) {
+if (config.purgeProfiles) {
   // Delete all profiles (except for forced ones) that were created before this script has started
   // running. This way we ensure there aren't any orphaned ones remaining in the DB
   await prisma.profile.deleteMany({
