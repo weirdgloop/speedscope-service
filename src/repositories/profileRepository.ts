@@ -86,32 +86,30 @@ export function aggregateSpeedscopeData(data: (Profile|AggregatedProfile)[], nam
     trackMemory('sample-sorting');
   });
 
-  const globalSortTuples = new Map<string, number[]>();
-
-  console.log('Creating sort tuples...');
-  for (const sample of globalSamples.keys()) {
-    const arr = sample.split(',').map(Number);
-    const values: number[] = [];
-    for (let i = 0; i < arr.length; i++) {
-      const key = arr.slice(0, i).join(',');
-      values.push(-(globalSort.get(key) ?? 0));
-    }
-
-    globalSortTuples.set(sample, values);
-    trackMemory('tuple-creation');
-  }
-
   console.log('Sorting tuples...');
   const tuples = Array.from(globalSamples.entries());
+
   tuples.sort((a, b) => {
-    const ta = globalSortTuples.get(a[0])!;
-    const tb = globalSortTuples.get(b[0])!;
-    for (let i = 0; i < Math.min(ta.length, tb.length); i++) {
-      if (ta[i] !== tb[i]) return ta[i]! - tb[i]!;
+    const partsA = a[0].split(',');
+    const partsB = b[0].split(',');
+    const minLen = Math.min(partsA.length, partsB.length);
+
+    let prefixA = '';
+    let prefixB = '';
+
+    for (let i = 0; i < minLen; i++) {
+      const weightA = globalSort.get(prefixA) ?? 0;
+      const weightB = globalSort.get(prefixB) ?? 0;
+
+      if (weightA !== weightB) return weightB - weightA;
+
+      prefixA += (i === 0 ? '' : ',') + partsA[i];
+      prefixB += (i === 0 ? '' : ',') + partsB[i];
     }
-    trackMemory('tuple-sorting');
-    return ta.length - tb.length;
+
+    return partsA.length - partsB.length;
   });
+  trackMemory('tuple-sorting');
 
   console.log('Rebuilding aggregated profile...');
   json!.profiles[0]!.samples = tuples.map(([key]) => key.split(',').map(Number));
