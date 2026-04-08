@@ -43,4 +43,4 @@ COPY --from=ui-builder /speedscope/speedscope/dist ./ui
 
 EXPOSE 3000
 
-CMD sh -c "npx prisma migrate deploy && node dist/src/server.js"
+CMD ["sh", "-c", "npx prisma migrate deploy && node dist/src/server.js"]
