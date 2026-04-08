@@ -45,3 +45,13 @@ aggregates [speedscope profiles](https://github.com/jlfwong/speedscope/blob/main
   "environment": "prod"
 }
 ```
+
+## Cronjobs
+
+To generate hourly and daily aggregations, you need to run two scripts via cronjobs. Example:
+```cronexp
+0 * * * * bash /srv/speedscope/scripts/aggregate-hourly.sh 2>&1 | while read line; do echo "$(date '+\%Y-\%m-\%d \%H:\%M:\%S') $line"; done >> /var/log/speedscope/cron-hourly.log
+30 0 * * * bash /srv/speedscope/scripts/aggregate-daily.sh 2>&1 | while read line; do echo "$(date '+\%Y-\%m-\%d \%H:\%M:\%S') $line"; done >> /var/log/speedscope/cron-daily.log
+```
+The daily aggregation is run at 00:30 as it can be quite memory intensive and shouldn't be run at 
+the same time as the hourly aggregation.
