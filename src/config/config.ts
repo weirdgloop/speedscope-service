@@ -4,6 +4,7 @@ dotenv.config();
 
 interface Config {
   port: number;
+  unixSocket?: string;
   nodeEnv: string;
   logToken: string;
   requestSizeLimit: string;
@@ -26,6 +27,7 @@ if (!databaseUrl) {
 
 const config: Config = {
   port: Number(process.env.PORT) || 3000,
+  unixSocket: process.env.UNIX_SOCKET,
   nodeEnv: process.env.NODE_ENV || 'development',
   logToken: logToken,
   // during testing, some requests were up to 63mb large
