@@ -25,10 +25,17 @@ if (!aggregatedProfiles || aggregatedProfiles.length === 0) {
   process.exit(0);
 }
 
+// Disconnect so we don't block the DB during the aggregation
+await prisma.$disconnect();
+
 const aggregatedData = aggregateSpeedscopeData(
     aggregatedProfiles,
     `Daily aggregation (${start.toISOString()} to ${end.toISOString()})`
 );
+
+// Connect to the DB again
+await prisma.$connect();
+
 await prisma.aggregatedProfile.create({
   data: {
     startTime: start,
