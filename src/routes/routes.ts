@@ -36,7 +36,7 @@ router.get(
 
 router.get(
     '/view/aggregation/latest/:type', [
-      param('type').isString().notEmpty().isIn([AggregatedProfileType.HOURLY, AggregatedProfileType.DAILY]),
+      param('type').isString().notEmpty().toUpperCase().isIn([AggregatedProfileType.HOURLY, AggregatedProfileType.DAILY]),
     ],
     handleValidationErrors,
     viewLatestAggregation
@@ -86,7 +86,7 @@ router.get(
 router.get(
     '/aggregations/:type',
     [
-      param('type').notEmpty().isIn([AggregatedProfileType.HOURLY, AggregatedProfileType.DAILY])
+      param('type').notEmpty().toUpperCase().isIn([AggregatedProfileType.HOURLY, AggregatedProfileType.DAILY])
     ],
     handleValidationErrors,
     getAggregations
@@ -98,7 +98,7 @@ router.get(
       origin: config.allowedOrigin,
     }),
     [
-      param('type').exists().isIn([AggregatedProfileType.HOURLY, AggregatedProfileType.DAILY])
+      param('type').exists().toUpperCase().isIn([AggregatedProfileType.HOURLY, AggregatedProfileType.DAILY])
     ],
     handleValidationErrors,
     getLatestAggregation
@@ -107,7 +107,7 @@ router.get(
 router.get(
     '/aggregation/latest/:type/metadata',
     [
-      param('type').exists().isIn([AggregatedProfileType.HOURLY, AggregatedProfileType.DAILY])
+      param('type').exists().toUpperCase().isIn([AggregatedProfileType.HOURLY, AggregatedProfileType.DAILY])
     ],
     handleValidationErrors,
     getLatestAggregationMetadata
@@ -116,7 +116,7 @@ router.get(
 router.get(
     '/aggregation/latest/:type/frame-timings',
     [
-      param('type').exists().isIn([AggregatedProfileType.HOURLY, AggregatedProfileType.DAILY])
+      param('type').exists().toUpperCase().isIn([AggregatedProfileType.HOURLY, AggregatedProfileType.DAILY])
     ],
     handleValidationErrors,
     getLatestFrameTimingData
