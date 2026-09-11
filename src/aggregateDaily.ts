@@ -29,6 +29,22 @@ const aggregatedData = aggregateSpeedscopeData(
     aggregatedProfiles,
     `Daily aggregation (${start.toISOString()} to ${end.toISOString()})`
 );
+
+console.log('Converting data to JSON...');
+
+const profileJson = JSON.stringify(aggregatedData.file);
+delete aggregatedData.file;
+
+const frameTimingJson = JSON.stringify(aggregatedData.frameTimings, (k, v) => {
+  if (v instanceof Map) {
+    return Array.from(v.entries());
+  }
+  return v;
+});
+delete aggregatedData.frameTimings;
+
+console.log('Writing data to DB...');
+
 await prisma.aggregatedProfile.create({
   data: {
     startTime: start,
@@ -37,17 +53,13 @@ await prisma.aggregatedProfile.create({
     profileCount: aggregatedProfiles
       .map((p) => p.profileCount)
       .reduce((a, b) => a + b, 0),
-    speedscopeData: gzipSync(JSON.stringify(aggregatedData.file)),
-    frameTimingData: gzipSync(JSON.stringify(aggregatedData.frameTimings, (k, v) => {
-      if (v instanceof Map) {
-        return Array.from(v.entries());
-      }
-      return v;
-    })),
+    speedscopeData: gzipSync(profileJson),
+    frameTimingData: gzipSync(frameTimingJson),
   }
 });
 
 if (config.purgeHourlyAggregations) {
+  console.log('Purging hourly aggregations...');
   await prisma.aggregatedProfile.deleteMany({
     where: {
       endTime: {
@@ -57,3 +69,5 @@ if (config.purgeHourlyAggregations) {
     },
   });
 }
+
+console.log('Done!');
