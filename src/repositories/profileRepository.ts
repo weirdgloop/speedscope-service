@@ -6,8 +6,8 @@ import {gunzipSync} from "node:zlib";
 import config from "../config/config.js";
 
 export interface AggregationResult {
-  file: SpeedscopeFile;
-  frameTimings: Map<string, Map<string, number>>;
+  file?: SpeedscopeFile;
+  frameTimings?: Map<string, Map<string, number>>;
 }
 
 /**
