@@ -44,4 +44,5 @@ model AggregatedProfile {
   frameTimingData Bytes
 
   @@index([type])
+  @@index([type, endTime(sort: Desc)])
 }
