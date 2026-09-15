@@ -5,9 +5,11 @@ import {AggregatedProfile, Profile} from "../../generated/prisma/client";
 import {gunzipSync} from "node:zlib";
 import config from "../config/config.js";
 
+export type FrameTimings = Map<string, Map<string, number>>;
+
 export interface AggregationResult {
   file?: SpeedscopeFile;
-  frameTimings?: Map<string, Map<string, number>>;
+  frameTimings?: FrameTimings;
 }
 
 /**
@@ -30,7 +32,7 @@ export function aggregateSpeedscopeData(data: (Profile|AggregatedProfile)[], nam
   }
 
   const globalFrames = new Map<string, number>();
-  const frameTimings: Map<string, Map<string, number>> = new Map();
+  const frameTimings: FrameTimings = new Map();
   const globalFramesRev: SpeedscopeFrame[] = [];
   const globalSamples = new Map<string, number>();
   let json: SpeedscopeFile | undefined;
