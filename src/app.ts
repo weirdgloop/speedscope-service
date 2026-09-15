@@ -1,8 +1,8 @@
 import express from 'express';
 import routes from './routes/routes.js';
 import { errorHandler } from './middlewares/errorHandler.js';
-import path from "node:path";
-import {fileURLToPath} from "node:url";
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 
 const app = express();
 

@@ -1,9 +1,9 @@
 import type {
   SpeedscopeFile, SpeedscopeFrame,
 } from '../models/speedscope.js';
-import {AggregatedProfile, Profile} from "../../generated/prisma/client";
-import {gunzipSync} from "node:zlib";
-import config from "../config/config.js";
+import { AggregatedProfile, Profile } from '../../generated/prisma/client';
+import { gunzipSync } from 'node:zlib';
+import config from '../config/config.js';
 
 export type FrameTimings = Map<string, Map<string, number>>;
 
@@ -16,7 +16,7 @@ export interface AggregationResult {
  * @param data Array of profiles to aggregate. Must contain at least one entry.
  * @param name The name to assign to the aggregated profile.
  */
-export function aggregateSpeedscopeData(data: (Profile|AggregatedProfile)[], name: string): AggregationResult {
+export function aggregateSpeedscopeData(data: (Profile | AggregatedProfile)[], name: string): AggregationResult {
   if (data.length === 0) {
     throw new Error('No data to aggregate!');
   }
