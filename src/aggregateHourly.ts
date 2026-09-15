@@ -1,8 +1,8 @@
-import {aggregateSpeedscopeData} from './repositories/profileRepository.js';
-import {prisma} from "./prisma.js";
-import {gzipSync} from "node:zlib";
-import {AggregatedProfileType, Profile} from "../generated/prisma/client.js";
-import config from "./config/config.js";
+import { aggregateSpeedscopeData } from './repositories/profileRepository.js';
+import { prisma } from './prisma.js';
+import { gzipSync } from 'node:zlib';
+import { AggregatedProfileType, Profile } from '../generated/prisma/client.js';
+import config from './config/config.js';
 
 const end = new Date();
 const start = new Date(end.getTime() - (60 * 60 * 1000)); // 1 hour ago
@@ -24,8 +24,8 @@ if (profiles.length === 0) {
   process.exit(0);
 }
 const aggregatedData = aggregateSpeedscopeData(
-    profiles,
-    `Hourly aggregation (${start.toISOString()} to ${end.toISOString()})`
+  profiles,
+  `Hourly aggregation (${start.toISOString()} to ${end.toISOString()})`,
 );
 await prisma.aggregatedProfile.create({
   data: {
@@ -40,7 +40,7 @@ await prisma.aggregatedProfile.create({
       }
       return v;
     })),
-  }
+  },
 });
 
 if (config.purgeProfiles) {

@@ -1,11 +1,11 @@
-import {timingSafeEqual} from "node:crypto";
-import config from "../config/config.js";
-import {Request, Response, NextFunction} from "express";
+import { timingSafeEqual } from 'node:crypto';
+import config from '../config/config.js';
+import { Request, Response, NextFunction } from 'express';
 
 function requireAuth(
-    req: Request,
-    res: Response,
-    next: NextFunction
+  req: Request,
+  res: Response,
+  next: NextFunction,
 ) {
   const auth = req.headers.authorization;
   const expected = `Bearer ${config.logToken}`;

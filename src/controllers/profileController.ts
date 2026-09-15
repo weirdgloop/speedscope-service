@@ -1,8 +1,8 @@
 import type { NextFunction, Request, Response } from 'express';
-import type {AggregatedProfileType, Profile} from "../../generated/prisma/client.js";
-import {prisma} from "../prisma.js";
-import {gunzipSync, gzipSync} from "node:zlib";
-import escapeHTML from "escape-html";
+import type { AggregatedProfileType, Profile } from '../../generated/prisma/client.js';
+import { prisma } from '../prisma.js';
+import { gunzipSync, gzipSync } from 'node:zlib';
+import escapeHTML from 'escape-html';
 
 export const logProfile = async (
   req: Request,
@@ -22,7 +22,7 @@ export const logProfile = async (
     } = req.body;
 
     const exists = await prisma.profile.findUnique({
-      where: { id }
+      where: { id },
     });
     if (exists) {
       return res
@@ -60,7 +60,7 @@ export const getProfile = async (
     const { id } = req.params;
 
     const profile = await prisma.profile.findUnique({
-      where: { id: id as string }
+      where: { id: id as string },
     }) as Profile | null;
     if (!profile) {
       return res.status(404).json({ error: 'Profile not found' });
@@ -88,33 +88,33 @@ const createViewHtml = (profileUrl: string) => {
 };
 
 export const viewLatestAggregation = async (
-    req: Request,
-    res: Response,
+  req: Request,
+  res: Response,
 ) => {
   const { type } = req.params;
   res.status(200).send(createViewHtml(`/#profileURL=/aggregation/latest/${type}`));
 };
 
 export const viewAggregation = async (
-    req: Request,
-    res: Response,
+  req: Request,
+  res: Response,
 ) => {
   const { id } = req.params;
   res.status(200).send(createViewHtml(`/#profileURL=/aggregation/${id}`));
 };
 
 export const viewProfile = async (
-    req: Request,
-    res: Response,
+  req: Request,
+  res: Response,
 ) => {
   const { id } = req.params;
   res.status(200).send(createViewHtml(`/#profileURL=/profile/${id}`));
 };
 
 export const getProfileMetadata = async (
-    req: Request,
-    res: Response,
-    next: NextFunction,
+  req: Request,
+  res: Response,
+  next: NextFunction,
 ) => {
   try {
     const { id } = req.params;
@@ -130,7 +130,7 @@ export const getProfileMetadata = async (
         timestamp: true,
         environment: true,
         parserReport: true,
-      }
+      },
     }) as Profile | null;
     if (!profile) {
       return res.status(404).json({ error: 'Profile not found' });
@@ -149,33 +149,33 @@ export const getProfileMetadata = async (
   } catch (error) {
     next(error);
   }
-}
+};
 
 export const getAggregations = async (
-    req: Request,
-    res: Response,
-    next: NextFunction,
+  req: Request,
+  res: Response,
+  next: NextFunction,
 ) => {
   try {
-    const {type} = req.params;
+    const { type } = req.params;
 
-    const where = type ? {type: type as AggregatedProfileType} : {};
+    const where = type ? { type: type as AggregatedProfileType } : {};
     const aggregatedProfiles = await prisma.aggregatedProfile.findMany({
       where,
-      orderBy: {endTime: 'desc'},
+      orderBy: { endTime: 'desc' },
       select: {
         id: true,
         startTime: true,
         endTime: true,
         type: true,
         profileCount: true,
-      }
+      },
     });
     res.status(200).json(aggregatedProfiles);
   } catch (error) {
     next(error);
   }
-}
+};
 
 export const getLatestAggregation = async (
   req: Request,
@@ -201,9 +201,9 @@ export const getLatestAggregation = async (
 };
 
 export const getLatestAggregationMetadata = async (
-    req: Request,
-    res: Response,
-    next: NextFunction,
+  req: Request,
+  res: Response,
+  next: NextFunction,
 ) => {
   try {
     const { type } = req.params;
@@ -217,7 +217,7 @@ export const getLatestAggregationMetadata = async (
         endTime: true,
         type: true,
         profileCount: true,
-      }
+      },
     });
     if (!aggregatedProfile) {
       return res.status(404).json({ error: 'No aggregated profiles found' });
@@ -227,12 +227,12 @@ export const getLatestAggregationMetadata = async (
   } catch (error) {
     next(error);
   }
-}
+};
 
 export const getLatestFrameTimingData = async (
-    req: Request,
-    res: Response,
-    next: NextFunction,
+  req: Request,
+  res: Response,
+  next: NextFunction,
 ) => {
   try {
     const { type } = req.params;
@@ -253,9 +253,9 @@ export const getLatestFrameTimingData = async (
 };
 
 export const getAggregationById = async (
-    req: Request,
-    res: Response,
-    next: NextFunction,
+  req: Request,
+  res: Response,
+  next: NextFunction,
 ) => {
   try {
     const { id } = req.params;
@@ -272,12 +272,12 @@ export const getAggregationById = async (
   } catch (error) {
     next(error);
   }
-}
+};
 
 export const getAggregationMetadataById = async (
-    req: Request,
-    res: Response,
-    next: NextFunction,
+  req: Request,
+  res: Response,
+  next: NextFunction,
 ) => {
   try {
     const { id } = req.params;
@@ -290,7 +290,7 @@ export const getAggregationMetadataById = async (
         endTime: true,
         type: true,
         profileCount: true,
-      }
+      },
     });
     if (!aggregatedProfile) {
       return res.status(404).json({ error: 'Aggregated profile not found' });
@@ -300,12 +300,12 @@ export const getAggregationMetadataById = async (
   } catch (error) {
     next(error);
   }
-}
+};
 
 export const getAggregationFrameTimingDataById = async (
-    req: Request,
-    res: Response,
-    next: NextFunction,
+  req: Request,
+  res: Response,
+  next: NextFunction,
 ) => {
   try {
     const { id } = req.params;
@@ -322,4 +322,4 @@ export const getAggregationFrameTimingDataById = async (
   } catch (error) {
     next(error);
   }
-}
+};
