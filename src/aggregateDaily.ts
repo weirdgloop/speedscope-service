@@ -43,13 +43,6 @@ const aggregateData = async ( start: Date, end: Date ) => {
 };
 
 const { aggregatedData, profileCount } = await aggregateData( start, end );
-
-if (global.gc) {
-  console.log('Current memory usage: ', process.memoryUsage());
-  global.gc();
-  console.log('After GC: ', process.memoryUsage());
-}
-
 console.log('Compressing profile...');
 const compressedProfile = await jsonifyAndCompressProfile( aggregatedData.file as SpeedscopeFile );
 delete aggregatedData.file;
