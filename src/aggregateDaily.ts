@@ -1,9 +1,13 @@
-import {aggregateSpeedscopeData, AggregationResult} from "./repositories/profileRepository.js";
+import {
+  aggregateSpeedscopeData,
+  FrameTimings
+} from "./repositories/profileRepository.js";
 import {AggregatedProfileType} from "../generated/prisma/enums.js";
-import {gzipSync} from "node:zlib";
 import {prisma} from "./prisma.js";
 import {AggregatedProfile} from "../generated/prisma/client.js";
 import config from "./config/config.js";
+import {jsonifyAndCompressFrameTimings, jsonifyAndCompressProfile} from "./utils/jsonHelper.js";
+import {SpeedscopeFile} from "./models/speedscope";
 
 const end = new Date();
 const start = new Date(end.getTime() - (24 * 60 * 60 * 1000)); // 1 day ago
@@ -38,30 +42,13 @@ const aggregateData = async ( start: Date, end: Date ) => {
   return { aggregatedData: aggregatedData, profileCount: profileCount };
 };
 
-const compressFrameTimings = ( aggregatedData: AggregationResult ) => {
-  console.log('Converting frame timings to JSON...');
-  const frameTimingJson = JSON.stringify(aggregatedData.frameTimings, (k, v) => {
-    if (v instanceof Map) {
-      return Array.from(v.entries());
-    }
-    return v;
-  });
-  delete aggregatedData.frameTimings;
-  console.log('Compressing frame timings...');
-  return gzipSync(frameTimingJson);
-};
-
-const compressProfile = ( aggregatedData: AggregationResult ) => {
-  console.log('Converting profile to JSON...');
-  const profileJson = JSON.stringify(aggregatedData.file);
-  delete aggregatedData.file;
-  console.log('Compressing profile...');
-  return gzipSync(profileJson);
-};
-
 const { aggregatedData, profileCount } = await aggregateData( start, end );
-const compressedProfile = compressProfile( aggregatedData );
-const compressedFrameTimings = compressFrameTimings( aggregatedData );
+console.log('Compressing profile...');
+const compressedProfile = await jsonifyAndCompressProfile( aggregatedData.file as SpeedscopeFile );
+delete aggregatedData.file;
+console.log('Compressing frame timings...');
+const compressedFrameTimings = await jsonifyAndCompressFrameTimings( aggregatedData.frameTimings as FrameTimings );
+delete aggregatedData.frameTimings;
 
 console.log('Writing data to DB...');
 
